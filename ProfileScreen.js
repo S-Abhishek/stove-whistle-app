@@ -5,9 +5,7 @@ import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Ic
 export default class ProfileScreen extends React.Component 
 {
   static navigationOptions = {
-    header:{
-      visible:false,
-    }
+    header: null
   }
   constructor(props)
   {
