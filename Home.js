@@ -10,6 +10,13 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 
 export default class Home extends React.Component {
+
+  static navigationOptions = {
+    header:{
+      visible:false,
+    }
+  }
+
   constructor(props) {
     super(props);
     this.state = { splash_sc : false };

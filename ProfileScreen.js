@@ -4,6 +4,11 @@ import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Ic
 
 export default class ProfileScreen extends React.Component 
 {
+  static navigationOptions = {
+    header:{
+      visible:false,
+    }
+  }
   constructor(props)
   {
     super(props);
@@ -16,14 +21,7 @@ export default class ProfileScreen extends React.Component
       <Container>
         <Header />
         <Content>
-          <Form>
-            <Item>
-              <Input placeholder="Username" />
-            </Item>
-            <Item last>
-              <Input placeholder="Kitchen id" />
-            </Item>
-          </Form>
+        <Thumbnail large source={{uri: "http://profilepicturesdp.com/wp-content/uploads/2018/06/default-user-profile-picture-7.png"}} />
         </Content>
         <Footer>
           <FooterTab>
