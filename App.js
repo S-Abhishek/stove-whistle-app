@@ -1,12 +1,22 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Container, Header, Left, Body, Right, Button, Icon, Title } from 'native-base';
+
+
 
 export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-      </View>
+      <Container>
+        <Header>
+          <Left>
+
+          </Left>
+          <Body>
+            <Title>Whistle</Title>
+          </Body>
+        </Header>
+      </Container>
     );
   }
 }
