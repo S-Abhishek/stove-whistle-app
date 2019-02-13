@@ -1,6 +1,18 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
 import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab} from 'native-base';
+import {createStackNavigator, createAppContainer} from 'react-navigation';
+
+const MainNavigator = createStackNavigator({
+  Home:{screen: App},
+  Profile:{screen: ProfileScreen},
+})
+
+const Application = createAppContainer(MainNavigator);
+
+export default Application;
+
+
 
 var cooker = require('./assets/whistle4.png')
 
@@ -8,7 +20,7 @@ var cooker = require('./assets/whistle4.png')
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = { splash_sc : false };
@@ -29,6 +41,8 @@ export default class App extends React.Component {
 
 
   render() {
+
+    const {navigate} = this.props.navigation;
 
     if(!this.state.splash_sc)
     {
@@ -53,7 +67,8 @@ export default class App extends React.Component {
                 <Icon name="arrow-back" />
               </Button>
             </Left>
-            <Body>
+            <Body style={styles.image}>
+              
               <Title>Whistle</Title>
             </Body>
             <Right>
@@ -91,7 +106,7 @@ export default class App extends React.Component {
               <Icon name="apps" />
               <Text>Cooker menu</Text>
             </Button>
-            <Button>
+            <Button onPress = {() => navigate('Profile')}>
               <Icon name="person" />
               <Text>User details</Text>
             </Button>
