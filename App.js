@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title} from 'native-base';
+import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab} from 'native-base';
 
 var cooker = require('./assets/whistle4.png')
 
@@ -73,13 +73,30 @@ export default class App extends React.Component {
               </CardItem>
               <CardItem cardBody>
                 <View style={styles.image}>
-                  <Image source = {cooker} />
+                  <Image source = {cooker}/>
+                  
                 </View>
+
+              </CardItem>
+              <CardItem>
 
               </CardItem>
             </Card>
             
           </Content>
+          <Footer>
+          <FooterTab>
+            
+            <Button active>
+              <Icon name="apps" />
+              <Text>Cooker menu</Text>
+            </Button>
+            <Button>
+              <Icon name="person" />
+              <Text>User details</Text>
+            </Button>
+          </FooterTab>
+        </Footer>
         </Container>
       );
     }
@@ -97,6 +114,6 @@ const styles = StyleSheet.create({
   },
   image: {
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center',
   }
 });
