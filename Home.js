@@ -90,7 +90,7 @@ export default class Home extends React.Component {
           </Button>            
 
           <Dialog
-            DialogState={this.state.DialogState}
+            DialogState={this.state.visible}
             dialogTitle={<DialogTitle title="Configure Cooker" />}>
             onTouchOutside={() => {this.setState({ DialogState: false });}}>
             dialogAnimation={new SlideAnimation({slideFrom: 'top'})}
