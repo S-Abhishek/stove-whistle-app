@@ -13,7 +13,7 @@ var cooker = require('./assets/whistle4.png')
 //To prevent overlap with notification bar
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
-state = { DialogState: false};
+//state = { DialogState: false};
 
 export default class Home extends React.Component {
 
@@ -24,7 +24,7 @@ export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { splash_sc : false , active: false };
+    this.state = { splash_sc : false , active: false, DialogState: false };
   }
 
   componentDidMount()
@@ -90,20 +90,42 @@ export default class Home extends React.Component {
           </Button>            
 
           <Dialog
-            DialogState={this.state.visible}
-            dialogTitle={<DialogTitle title="Configure Cooker" />}>
-            onTouchOutside={() => {this.setState({ DialogState: false });}}>
-            dialogAnimation={new SlideAnimation({slideFrom: 'top'})}
-            footer={
-              <DialogFooter>
-                <DialogButton text="Cancel" onPress={() => {}}/>
-                <DialogButton text="Submit" onPress={() => {}}/>
-              </DialogFooter>
-            }
-            <DialogContent style={{backgroundColor: '#F7F7F8',}}>
-              <Text>Customise content</Text>
-            </DialogContent>
-          </Dialog>
+          onDismiss={() => {this.setState({ DialogState: false });}}
+          width={0.9}
+          visible={this.state.DialogState}
+          rounded
+          actionsBordered
+          dialogTitle={
+            <DialogTitle
+              title="Configure cooker settings"
+              style={{backgroundColor: '#F7F7F8'}}
+              hasTitleBar={false}
+              align="left"
+            />
+          }
+          footer={
+            <DialogFooter>
+              <DialogButton
+                text="Cancel"
+                bordered
+                onPress={() => {this.setState({ DialogState: false });}}
+                key="button-1"
+              />
+              <DialogButton
+                text="Ok"
+                bordered
+                onPress={() => {this.setState({ DialogState: false });}}
+                key="button-2"
+              />
+            </DialogFooter>
+          }
+        >
+          <DialogContent
+            style={{backgroundColor: '#F7F7F8'}}
+          >
+            <Text>Configure content</Text>
+          </DialogContent>
+        </Dialog>
 
           </Content>
           <Fab
