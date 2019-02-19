@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
 import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab} from 'native-base';
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 
 const dataArray = [
   { title: "Module #1", content: "Testing" },
@@ -83,9 +84,18 @@ export default class Home extends React.Component {
           <View style={{flex:1}}>
           <Content padder>
           <Accordion dataArray={dataArray} expanded={0}/>
-          <Button block>
+          <Button block onPress={() => {this.setState({ visible: true });}}>
                 <Text>Configure</Text>
           </Button>            
+
+          <Dialog
+            visible={this.state.visible}
+            onTouchOutside={() => {this.setState({ visible: false });}}>
+            <DialogContent style={{backgroundColor: '#F7F7F8',}}>
+              <Text>Customise content</Text>
+            </DialogContent>
+          </Dialog>
+
           </Content>
           <Fab
               active={this.state.active}
