@@ -1,7 +1,11 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab} from 'native-base';
+import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab} from 'native-base';
 
+const dataArray = [
+  { title: "Module #1", content: "Testing" },
+
+];
 
 var cooker = require('./assets/whistle4.png')
 
@@ -18,14 +22,17 @@ export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { splash_sc : false };
+    this.state = { splash_sc : false , active: false };
   }
 
   componentDidMount()
   {
+    var self = this;
     setTimeout(() => {
-      this.done();
+      self.done();
     },1000);
+
+    //self.interval = setInterval(self.Home,5000);
   }
 
   done()
@@ -73,28 +80,32 @@ export default class Home extends React.Component {
               </Button>
             </Right>
           </Header>
-          <Content>
-            <Card>
-              <CardItem>
-                <Left>
-                  <Body>
-                    <Text>Number of whistles</Text>
-                  </Body>
-                </Left>
-              </CardItem>
-              <CardItem cardBody>
-                <View style={styles.image}>
-                  <Image source = {cooker}/>
-                  
-                </View>
-
-              </CardItem>
-              <CardItem>
-
-              </CardItem>
-            </Card>
-            
+          <View style={{flex:1}}>
+          <Content padder>
+          <Accordion dataArray={dataArray} expanded={0}/>
+          <Button block>
+                <Text>Configure</Text>
+          </Button>            
           </Content>
+          <Fab
+              active={this.state.active}
+              direction="up"
+              containerStyle={{ }}
+              style={{ backgroundColor: '#5067FF' }}
+              position="bottomRight"
+              onPress={() => this.setState({ active: !this.state.active })}>
+              <Icon name="add" />
+              <Button style={{ backgroundColor: '#34A34F' }}>
+                <Icon name="logo-whatsapp" />
+              </Button>
+              <Button style={{ backgroundColor: '#3B5998' }}>
+                <Icon name="logo-facebook" />
+              </Button>
+              <Button disabled style={{ backgroundColor: '#DD5144' }}>
+                <Icon name="mail" />
+              </Button>
+            </Fab>
+          </View>
           <Footer>
           <FooterTab>
             

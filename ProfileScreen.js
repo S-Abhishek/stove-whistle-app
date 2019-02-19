@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
-import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab} from 'native-base';
+import { Container, Header, Content, Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Form , Item , Input } from 'native-base';
 
 export default class ProfileScreen extends React.Component 
 {
@@ -19,7 +19,16 @@ export default class ProfileScreen extends React.Component
       <Container>
         <Header />
         <Content>
-        <Thumbnail large source={{uri: "http://profilepicturesdp.com/wp-content/uploads/2018/06/default-user-profile-picture-7.png"}} />
+          <Thumbnail large source={{uri: "http://profilepicturesdp.com/wp-content/uploads/2018/06/default-user-profile-picture-7.png"}} />
+          <Form>
+            <Item>
+              <Input placeholder="Username" />
+            </Item>
+            <Item last>
+              <Input placeholder="Allowed MAC address" />
+            </Item>
+          </Form>
+        
         </Content>
         <Footer>
           <FooterTab>
