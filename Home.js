@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
-import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab} from 'native-base';
+import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
+import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 
 const dataArray = [
   { title: "Module #1", content: "Testing" },
@@ -12,6 +13,7 @@ var cooker = require('./assets/whistle4.png')
 //To prevent overlap with notification bar
 import { getStatusBarHeight } from 'react-native-status-bar-height';
 
+//state = { DialogState: false};
 
 export default class Home extends React.Component {
 
@@ -22,7 +24,7 @@ export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { splash_sc : false , active: false };
+    this.state = { splash_sc : false , active: false, DialogState: false };
   }
 
   componentDidMount()
@@ -83,9 +85,63 @@ export default class Home extends React.Component {
           <View style={{flex:1}}>
           <Content padder>
           <Accordion dataArray={dataArray} expanded={0}/>
-          <Button block>
+          <Button block onPress={() => {this.setState({ DialogState: true });}}>
                 <Text>Configure</Text>
           </Button>            
+
+          <Dialog
+          onDismiss={() => {this.setState({ DialogState: false });}}
+          width={0.9}
+          visible={this.state.DialogState}
+          rounded
+          actionsBordered
+          dialogTitle={
+            <DialogTitle
+              title="Cooker settings"
+              style={{backgroundColor: '#F7F7F8'}}
+              hasTitleBar={false}
+              align="left"
+            />
+          }
+          footer={
+            <DialogFooter>
+              <DialogButton
+                text="Cancel"
+                bordered
+                onPress={() => {this.setState({ DialogState: false });}}
+                key="button-1"
+              />
+              <DialogButton
+                text="Ok"
+                bordered
+                onPress={() => {this.setState({ DialogState: false });}}
+                key="button-2"
+              />
+            </DialogFooter>
+          }
+        >
+          <DialogContent
+            style={{backgroundColor: '#F7F7F8'}}
+          >
+            <Card transparent>
+            <CardItem>
+              <Item regular>
+                <Input placeholder='Enter no of whistles' />
+              </Item>
+            </CardItem>
+            <CardItem footer>
+              <Button rounded>
+                <Text>Reset</Text>
+              </Button>
+            <Right/>
+              <Button rounded>
+                <Text>Start</Text>
+              </Button>
+            </CardItem>
+          </Card>
+          </DialogContent>
+        </Dialog>
+
           </Content>
           <Fab
               active={this.state.active}
