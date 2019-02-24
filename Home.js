@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
-import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab} from 'native-base';
+import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 
 const dataArray = [
@@ -97,7 +97,7 @@ export default class Home extends React.Component {
           actionsBordered
           dialogTitle={
             <DialogTitle
-              title="Configure cooker settings"
+              title="Cooker settings"
               style={{backgroundColor: '#F7F7F8'}}
               hasTitleBar={false}
               align="left"
@@ -123,7 +123,22 @@ export default class Home extends React.Component {
           <DialogContent
             style={{backgroundColor: '#F7F7F8'}}
           >
-            <Text>Configure content</Text>
+            <Card transparent>
+            <CardItem>
+              <Item regular>
+                <Input placeholder='Enter no of whistles' />
+              </Item>
+            </CardItem>
+            <CardItem footer>
+              <Button rounded>
+                <Text>Reset</Text>
+              </Button>
+            <Right/>
+              <Button rounded>
+                <Text>Start</Text>
+              </Button>
+            </CardItem>
+          </Card>
           </DialogContent>
         </Dialog>
 
