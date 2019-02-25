@@ -5,7 +5,7 @@ import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, Dialo
 import EventEmitter from 'EventEmitter';
 import { Font, AppLoading } from 'expo';
 const dataArray = [
-  { title: "Module #1", content: "Testing" },
+  { title: "Whistle 1", content: "Disconnected" },
 
 ];
 
@@ -26,12 +26,20 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = { splash_sc : false , active: false, DialogState: false, loading : true };
+  }
+
+  componentWillMount() {
+    this.loadFonts();
+    this.initSocket();
+  }
+
+  initSocket(){
     this.client = new WebSocket('ws://echo.websocket.org');
     this.messageEvents = new EventEmitter();
     // this.connectionEvents = new EventEmitter();
 
     this.client.onopen = connection => {
-
+      
       console.log( new Date().toISOString() + ' Connected');
       this.messageEvents.addListener('sendmsg', msg => {
           console.log("Sending message "+ msg );
@@ -44,6 +52,7 @@ export default class Home extends React.Component {
 
     this.client.onmessage = msg => {
       console.log(msg.data + " recieved")
+      msg = msg.data;
       try{
           msg = JSON.parse(msg);
           let action = msg.action;
@@ -57,7 +66,7 @@ export default class Home extends React.Component {
     };
   }
 
-  async componentWillMount() {
+  async loadFonts(){
     await Font.loadAsync({
       Roboto: require("native-base/Fonts/Roboto.ttf"),
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
@@ -85,14 +94,8 @@ export default class Home extends React.Component {
       return (
         <Container>
           <Header>
-            <Left>
-              <Button transparent>
-                <Icon name="arrow-back" />
-              </Button>
-            </Left>
             <Body style={styles.image}>
-              
-              <Title>Whistle</Title>
+              <Title>Whistle Counter</Title>
             </Body>
             <Right>
               <Button transparent>
@@ -102,9 +105,9 @@ export default class Home extends React.Component {
           </Header>
           <View style={{flex:1}}>
           <Content padder>
-          <Accordion dataArray={dataArray} expanded={0}/>
-          <Button block onPress={() => {this.setState({ DialogState: true });}}>
-                <Text>Configure</Text>
+          <Accordion dataArray={dataArray} expanded={0} rounded/>
+          <Button rounded block onPress={() => {this.setState({ DialogState: true });}}>
+                <Text>Count Whistles</Text>
           </Button>            
 
           <Dialog
@@ -138,9 +141,7 @@ export default class Home extends React.Component {
             </DialogFooter>
           }
         >
-          <DialogContent
-            style={{backgroundColor: '#F7F7F8'}}
-          >
+          <DialogContent>
             <Card transparent>
             <CardItem>
               <Item regular>
@@ -148,13 +149,15 @@ export default class Home extends React.Component {
               </Item>
             </CardItem>
             <CardItem footer>
-              <Button rounded>
+              <Button style={{ backgroundColor: '#BB2B2B' }} rounded>
                 <Text>Reset</Text>
               </Button>
             <Right/>
-              <Button rounded>
+            <Right/>
+              <Button style={{ backgroundColor: '#4E9657' }} rounded>
                 <Text>Start</Text>
               </Button>
+
             </CardItem>
           </Card>
           </DialogContent>
