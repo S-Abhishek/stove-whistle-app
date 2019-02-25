@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
 import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
-import EventEmitter from 'event-emitter';
-
+import EventEmitter from 'EventEmitter';
+import { Font, AppLoading } from 'expo';
 const dataArray = [
   { title: "Module #1", content: "Testing" },
 
@@ -25,23 +25,25 @@ export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { splash_sc : false , active: false, DialogState: false };
-    this.client = new WebSocket('ws://echo.websocket.org')
+    this.state = { splash_sc : false , active: false, DialogState: false, loading : true };
+    this.client = new WebSocket('ws://echo.websocket.org');
     this.messageEvents = new EventEmitter();
-    this.connectionEvents = new EventEmitter();
+    // this.connectionEvents = new EventEmitter();
 
     this.client.onopen = connection => {
+
       console.log( new Date().toISOString() + ' Connected');
-      this.client.send('{"action": "whistle", "data" : "increment"}')
-      console.log("sent")
-      this.messageEvents.on('sendmsg', msg => {
+      this.messageEvents.addListener('sendmsg', msg => {
           console.log("Sending message "+ msg );
           this.client.send(msg);
       });
+
+      this.messageEvents.emit('sendmsg',"{'action': 'whistle', 'data' : 'increment'}");
+
     };
 
     this.client.onmessage = msg => {
-      console.log(msg.data + "recieved")
+      console.log(msg.data + " recieved")
       try{
           msg = JSON.parse(msg);
           let action = msg.action;
@@ -53,20 +55,14 @@ export default class Home extends React.Component {
         console.log("JSON error")
       }
     };
-
-    
-    this.messageEvents.emit('sendmsg','{"action": "whistle", "data" : "increment"}');
-
   }
 
-  componentDidMount()
-  {
-    var self = this;
-    setTimeout(() => {
-      self.done();
-    },1000);
-
-    //self.interval = setInterval(self.Home,5000);
+  async componentWillMount() {
+    await Font.loadAsync({
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
+    });
+    this.setState({ loading: false });
   }
 
   done()
@@ -77,25 +73,14 @@ export default class Home extends React.Component {
 
 
   render() {
-
-    const {navigate} = this.props.navigation;
-    var x = "aaa";
     
-    if(!this.state.splash_sc)
+    const {navigate} = this.props.navigation;
+
+    if(this.state.loading)
     {
-      return (
-
-        <Container>
-          <Title>
-            Hello
-          </Title>
-          
-        </Container>
-
-      );
-
+      return <AppLoading/>;
     }
-    else 
+    else
     {
       return (
         <Container>
