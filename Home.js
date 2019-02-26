@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, View , Image } from 'react-native';
 import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
-import EventEmitter from 'EventEmitter';
 import { Font, AppLoading } from 'expo';
 const dataArray = [
   { title: "Whistle 1", content: "Disconnected" },
@@ -26,6 +25,7 @@ export default class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = { splash_sc : false , active: false, DialogState: false, loading : true };
+    this.sendMessage = this.sendMessage.bind(this);
   }
 
   componentWillMount() {
@@ -35,19 +35,9 @@ export default class Home extends React.Component {
 
   initSocket(){
     this.client = new WebSocket('ws://echo.websocket.org');
-    this.messageEvents = new EventEmitter();
-    // this.connectionEvents = new EventEmitter();
 
     this.client.onopen = connection => {
-      
       console.log( new Date().toISOString() + ' Connected');
-      this.messageEvents.addListener('sendmsg', msg => {
-          console.log("Sending message "+ msg );
-          this.client.send(msg);
-      });
-
-      this.messageEvents.emit('sendmsg',"{'action': 'whistle', 'data' : 'increment'}");
-
     };
 
     this.client.onmessage = msg => {
@@ -58,12 +48,23 @@ export default class Home extends React.Component {
           let action = msg.action;
           let data = msg.data;
           console.log(new Date().toISOString() + ' Recieved '+ action +' : ' + data);
-          this.messageEvents.emit(action, data);
+          switch(action){
+            case 'whistlecount':
+              break;
+            
+          }
       }
       catch(err){
         console.log("JSON error")
       }
     };
+  }
+
+  sendMessage(action, data){
+    if(this.client.OPEN)
+    {
+      this.client.send(JSON.stringify({'action' : action, 'data' : data}));
+    }
   }
 
   async loadFonts(){
@@ -154,7 +155,7 @@ export default class Home extends React.Component {
               </Button>
             <Right/>
             <Right/>
-              <Button style={{ backgroundColor: '#4E9657' }} rounded>
+              <Button style={{ backgroundColor: '#4E9657' }} rounded onPress = {() => this.sendMessage('whistle','5')}>
                 <Text>Start</Text>
               </Button>
 
