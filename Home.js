@@ -106,10 +106,32 @@ export default class Home extends React.Component {
           </Header>
           <View style={{flex:1}}>
           <Content padder>
-          <Accordion dataArray={dataArray} expanded={0} rounded/>
-          <Button rounded block onPress={() => {this.setState({ DialogState: true });}}>
-                <Text>Count Whistles</Text>
-          </Button>            
+          <Card style={styles.card}>
+            <CardItem header>
+              <Text>Module #1</Text>
+            </CardItem>
+            <CardItem>
+              <Body>
+                <Text>
+                   Status:
+                </Text>
+                <Text>
+                   No of whistles:
+                </Text>
+                <Text>
+                  Timer:
+                </Text>
+                 
+              </Body>
+              
+            </CardItem>
+            <CardItem footer>
+                <Button style={{ position:'absolute', right:10, bottom:0 }} rounded block onPress={() => {this.setState({ DialogState: true });}}>
+                  <Text>Count Whistles</Text>
+                </Button>
+            </CardItem>
+          </Card>
+                     
 
           <Dialog
           onDismiss={() => {this.setState({ DialogState: false });}}
@@ -173,15 +195,7 @@ export default class Home extends React.Component {
               position="bottomRight"
               onPress={() => this.setState({ active: !this.state.active })}>
               <Icon name="add" />
-              <Button style={{ backgroundColor: '#34A34F' }}>
-                <Icon name="logo-whatsapp" />
-              </Button>
-              <Button style={{ backgroundColor: '#3B5998' }}>
-                <Icon name="logo-facebook" />
-              </Button>
-              <Button disabled style={{ backgroundColor: '#DD5144' }}>
-                <Icon name="mail" />
-              </Button>
+              
             </Fab>
           </View>
           <Footer>
@@ -217,5 +231,12 @@ const styles = StyleSheet.create({
   image: {
     justifyContent:'center',
     alignItems:'center',
-  }
+  },
+  card: {
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingTop: 10,
+      paddingBottom: 10
+  },
+  
 });
