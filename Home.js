@@ -87,6 +87,7 @@ export default class Home extends React.Component {
   }
 
   startWhistleCount(){
+    this.setState({ DialogState: false });
     this.sendMessage('whistleCount',this.state.count);
     this.setState({totalWhistleCount : this.state.count});
   }
