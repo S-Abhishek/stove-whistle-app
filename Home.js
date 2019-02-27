@@ -34,6 +34,7 @@ export default class Home extends React.Component {
                    connected : false,
                    currWhistleCount : 0,
                    totalWhistleCount : 0,
+                   count : 0,
                  };
 
     this.sendMessage = this.sendMessage.bind(this);
@@ -85,9 +86,9 @@ export default class Home extends React.Component {
     }
   }
 
-  startWhistleCount(data){
-    this.sendMessage('whistleCount',data);
-    this.setState({totalWhistleCount : data});
+  startWhistleCount(){
+    this.sendMessage('whistleCount',this.state.count);
+    this.setState({totalWhistleCount : this.state.count});
   }
 
   async loadFonts(){
@@ -176,13 +177,6 @@ export default class Home extends React.Component {
                 text="Cancel"
                 bordered
                 onPress={() => {this.setState({ DialogState: false });}}
-                key="button-1"
-              />
-              <DialogButton
-                text="Ok"
-                bordered
-                onPress={() => {this.setState({ DialogState: false });}}
-                key="button-2"
               />
             </DialogFooter>
           }
@@ -190,9 +184,20 @@ export default class Home extends React.Component {
           <DialogContent>
             <Card transparent>
             <CardItem>
-              <Item regular>
-                <Input placeholder='Enter no of whistles' />
-              </Item>
+            <Button full light>
+                <Text style = {{fontSize: 20, fontWeight: 'bold'}}>
+                  {this.state.count}
+                </Text>
+                </Button>
+            </CardItem>
+            <CardItem>
+                <Button light rounded onPress = {() => this.setState({ count: this.state.count + 1 })}>
+                  <Icon name = "ios-arrow-round-up" />
+                </Button>
+                <Right/>
+                <Button light rounded onPress = {() => this.setState({ count: this.state.count - 1 })}>
+                  <Icon name = "ios-arrow-round-down" />
+                </Button>
             </CardItem>
             <CardItem footer>
               <Button style={{ backgroundColor: '#BB2B2B' }} rounded>
@@ -200,7 +205,7 @@ export default class Home extends React.Component {
               </Button>
             <Right/>
             <Right/>
-              <Button style={{ backgroundColor: '#4E9657' }} rounded onPress = {() => this.startWhistleCount(5)}>
+              <Button style={{ backgroundColor: '#4E9657' }} rounded onPress = {() => this.startWhistleCount()}>
                 <Text>Start</Text>
               </Button>
 
