@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View , Image } from 'react-native';
+import { StyleSheet, View , Image, StatusBar } from 'react-native';
 import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 import { Font, AppLoading } from 'expo';
@@ -20,9 +20,24 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 
 export default class Home extends React.Component {
 
-  
+  // For white titlebar
+  // static navigationOptions = {
+  //   title: 'Whistle Counter',
+  //   height: 60,
+  //   headerStyle: {
+  //     shadowOpacity: 0,
+  //     shadowOffset: {
+  //       height: 0
+  //     },
+  //     shadowRadius: 0,
+  //     borderBottomWidth: 0,
+  //     elevation: 0
+  //   }
+    
+  // }
+
   static navigationOptions = {
-    header: null
+    header : null
   }
 
   constructor(props) {
@@ -92,6 +107,10 @@ export default class Home extends React.Component {
     this.setState({totalWhistleCount : this.state.count});
   }
 
+  resetWhistleCount(){
+    this.setState({count : 0});
+  }
+
   async loadFonts(){
     await Font.loadAsync({
       Roboto: require("native-base/Fonts/Roboto.ttf"),
@@ -108,8 +127,6 @@ export default class Home extends React.Component {
 
 
   render() {
-    
-    const {navigate} = this.props.navigation;
 
     if(this.state.loading)
     {
@@ -119,6 +136,8 @@ export default class Home extends React.Component {
     {
       return (
         <Container>
+          {/* For white titlebar */}
+          {/* <StatusBar barStyle="dark-content" backgroundColor = "#FFFFFF" /> */}
           <Header>
             <Body style={styles.image}>
               <Title>Whistle Counter</Title>
@@ -128,7 +147,7 @@ export default class Home extends React.Component {
                 <Icon name="more" />
               </Button>
             </Right>
-          </Header>
+        </Header>
           <View style={{flex:1}}>
           <Content padder>
           <Card style={styles.card}>
@@ -166,7 +185,7 @@ export default class Home extends React.Component {
           actionsBordered
           dialogTitle={
             <DialogTitle
-              title="Cooker settings"
+              title="Count Whistles"
               style={{backgroundColor: '#F7F7F8'}}
               hasTitleBar={false}
               align="left"
@@ -174,6 +193,7 @@ export default class Home extends React.Component {
           }
           footer={
             <DialogFooter>
+              <DialogButton></DialogButton>
               <DialogButton
                 text="Cancel"
                 bordered
@@ -182,34 +202,35 @@ export default class Home extends React.Component {
             </DialogFooter>
           }
         >
-          <DialogContent>
-            <Card transparent>
-            <CardItem>
-            <Button full light>
-                <Text style = {{fontSize: 20, fontWeight: 'bold'}}>
-                  {this.state.count}
-                </Text>
+          <DialogContent style={{height : 250}}>
+            <Card transparent style={{flex: 1, flexDirection: 'column',justifyContent: 'center'}} >
+            {/* <CardItem>
+            
+            </CardItem> */}
+            <CardItem><Text>Choose the number of whistles</Text></CardItem>
+            <CardItem style={{flex: 1, flexDirection: 'row',justifyContent: 'center' }} >
+                <Button light rounded onPress = {() => this.setState({ count: this.state.count > 0 ? this.state.count - 1 : this.state.count })}>
+                  <Icon name = "ios-arrow-round-down" />
                 </Button>
-            </CardItem>
-            <CardItem>
+                <Button style={{marginLeft : 60, marginRight : 60, height : 50, width : 50 }}full light rounded>
+                  <Text style = {{fontSize: 30, fontWeight: 'bold'}}>
+                    {this.state.count}
+                  </Text>
+                </Button>
                 <Button light rounded onPress = {() => this.setState({ count: this.state.count + 1 })}>
                   <Icon name = "ios-arrow-round-up" />
                 </Button>
-                <Right/>
-                <Button light rounded onPress = {() => this.setState({ count: this.state.count - 1 })}>
-                  <Icon name = "ios-arrow-round-down" />
-                </Button>
             </CardItem>
+
             <CardItem footer>
-              <Button style={{ backgroundColor: '#BB2B2B' }} rounded>
+              <Button style={{ backgroundColor: '#ef5350', paddingHorizontal : 10 }} rounded onPress = {() => this.resetWhistleCount()}>
                 <Text>Reset</Text>
               </Button>
             <Right/>
             <Right/>
-              <Button style={{ backgroundColor: '#4E9657' }} rounded onPress = {() => this.startWhistleCount()}>
+              <Button style={{ backgroundColor: '#66BB6A', paddingHorizontal : 10 }} rounded onPress = {() => this.startWhistleCount()}>
                 <Text>Start</Text>
               </Button>
-
             </CardItem>
           </Card>
           </DialogContent>
@@ -227,19 +248,6 @@ export default class Home extends React.Component {
               
             </Fab>
           </View>
-          <Footer>
-          <FooterTab>
-            
-            <Button active>
-              <Icon name="apps" />
-              <Text>Cooker menu</Text>
-            </Button>
-            <Button onPress = {() => navigate('ProfileScreen')}>
-              <Icon name="person" />
-              <Text>User details</Text>
-            </Button>
-          </FooterTab>
-        </Footer>
         </Container>
       );
     }
@@ -262,10 +270,11 @@ const styles = StyleSheet.create({
     alignItems:'center',
   },
   card: {
-      paddingLeft: 0,
-      paddingRight: 0,
+      paddingLeft: 5,
+      paddingRight: 5,
       paddingTop: 10,
-      paddingBottom: 10
+      paddingBottom: 20,
+      borderRadius: 10
   },
   
 });
