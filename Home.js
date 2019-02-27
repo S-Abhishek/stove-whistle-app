@@ -8,6 +8,9 @@ const dataArray = [
 
 ];
 
+const SendActions = ['whistleCount', ];
+const RecvActions = ['whistleInc',];
+
 var cooker = require('./assets/whistle4.png')
 
 //To prevent overlap with notification bar
@@ -24,7 +27,15 @@ export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { splash_sc : false , active: false, DialogState: false, loading : true };
+    this.state = { splash_sc : false , 
+                   active: false, 
+                   DialogState: false, 
+                   loading : true, 
+                   connected : false,
+                   currWhistleCount : 0,
+                   totalWhistleCount : 0,
+                 };
+
     this.sendMessage = this.sendMessage.bind(this);
   }
 
@@ -38,33 +49,45 @@ export default class Home extends React.Component {
 
     this.client.onopen = connection => {
       console.log( new Date().toISOString() + ' Connected');
+      this.setState({connected : true})
     };
 
+    // Recieve and handle messages
     this.client.onmessage = msg => {
-      console.log(msg.data + " recieved")
-      msg = msg.data;
-      try{
-          msg = JSON.parse(msg);
-          let action = msg.action;
-          let data = msg.data;
-          console.log(new Date().toISOString() + ' Recieved '+ action +' : ' + data);
-          switch(action){
-            case 'whistlecount':
-              break;
-            
-          }
+      console.log(msg.data + " recieved");
+      msg = msg.data.split(',');
+      const action = +msg[0];
+      const data = +msg[1];
+      try
+      {
+        switch(RecvActions[action])
+        {
+          case 'whistleInc':
+            this.setState(prevState => ({ currWhistleCount : prevState.currWhistleCount + 1}));
+            break;
+  
+        }
       }
-      catch(err){
-        console.log("JSON error")
+      catch(e)
+      {
+        console.log('Invalid action recieved :' + action);
       }
+
     };
   }
 
   sendMessage(action, data){
     if(this.client.OPEN)
     {
-      this.client.send(JSON.stringify({'action' : action, 'data' : data}));
+      let encoded = SendActions.indexOf(action) + ',' + data.toString();
+      console.log('Sending ' + action + ' : ' + data + ' as ' + encoded);
+      this.client.send(encoded);
     }
+  }
+
+  startWhistleCount(data){
+    this.sendMessage('whistleCount',data);
+    this.setState({totalWhistleCount : data});
   }
 
   async loadFonts(){
@@ -108,15 +131,15 @@ export default class Home extends React.Component {
           <Content padder>
           <Card style={styles.card}>
             <CardItem header>
-              <Text>Module #1</Text>
+              <Text style={{ fontSize: 25 }}>Whistle 1</Text>
             </CardItem>
             <CardItem>
               <Body>
                 <Text>
-                   Status:
+                   Status: <Text>{this.state.connected ? 'Connected' : 'Disconnected'}</Text>
                 </Text>
                 <Text>
-                   No of whistles:
+                   No of whistles: <Text>{this.state.currWhistleCount}</Text><Text>/{this.state.totalWhistleCount}</Text>
                 </Text>
                 <Text>
                   Timer:
@@ -177,7 +200,7 @@ export default class Home extends React.Component {
               </Button>
             <Right/>
             <Right/>
-              <Button style={{ backgroundColor: '#4E9657' }} rounded onPress = {() => this.sendMessage('whistle','5')}>
+              <Button style={{ backgroundColor: '#4E9657' }} rounded onPress = {() => this.startWhistleCount(5)}>
                 <Text>Start</Text>
               </Button>
 
