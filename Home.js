@@ -24,7 +24,7 @@ export default class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { splash_sc : false , active: false, DialogState: false, loading : true };
+    this.state = { splash_sc : false , active: false, DialogState: false, loading : true, whistleCount : 0 };
     this.sendMessage = this.sendMessage.bind(this);
   }
 
@@ -153,13 +153,6 @@ export default class Home extends React.Component {
                 text="Cancel"
                 bordered
                 onPress={() => {this.setState({ DialogState: false });}}
-                key="button-1"
-              />
-              <DialogButton
-                text="Ok"
-                bordered
-                onPress={() => {this.setState({ DialogState: false });}}
-                key="button-2"
               />
             </DialogFooter>
           }
@@ -167,9 +160,20 @@ export default class Home extends React.Component {
           <DialogContent>
             <Card transparent>
             <CardItem>
-              <Item regular>
-                <Input placeholder='Enter no of whistles' />
-              </Item>
+            <Button full light>
+                <Text style = {{fontSize: 20, fontWeight: 'bold'}}>
+                  {this.state.whistleCount}
+                </Text>
+                </Button>
+            </CardItem>
+            <CardItem>
+                <Button light rounded onPress = {() => this.setState({ whistleCount: this.state.whistleCount + 1 })}>
+                  <Icon name = "ios-arrow-round-up" />
+                </Button>
+                <Right/>
+                <Button light rounded onPress = {() => this.setState({ whistleCount: this.state.whistleCount - 1 })}>
+                  <Icon name = "ios-arrow-round-down" />
+                </Button>
             </CardItem>
             <CardItem footer>
               <Button style={{ backgroundColor: '#BB2B2B' }} rounded>
