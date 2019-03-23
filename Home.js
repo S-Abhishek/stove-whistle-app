@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View , Image, StatusBar } from 'react-native';
+import { StyleSheet, View , Image, StatusBar, TextInput } from 'react-native';
 import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 import { Font, AppLoading } from 'expo';
@@ -108,12 +108,12 @@ export default class Home extends React.Component {
   startWhistleCount(){
     this.setState({ DialogState: false });
     this.sendMessage('whistleStart', this.state.count);
-    this.setState({totalWhistleCount : this.state.count});
+    this.setState({totalWhistleCount: this.state.count});
   }
 
   stopWhistleCount(){
-    this.setState({currWhistleCount : 0});
-    this.setState({totalWhistleCount : 0});
+    this.setState({currWhistleCount: 0});
+    this.setState({totalWhistleCount: 0});
     this.sendMessage('whistleStop', 0);
 
   }
@@ -165,16 +165,29 @@ export default class Home extends React.Component {
             <CardItem header>
               <Text style={{ fontSize: 25 }}>Whistle 1</Text>
             </CardItem>
+            <CardItem style={{flex: 1, flexDirection: 'row'}}>
+              <Text>
+                IP :
+              </Text>
+              <TextInput style = {styles.input}
+              autoCapitalize = "none"
+              borderColor = "#000000"
+              placeholder = {this.state.ws_url}
+              placeholderTextColor = "#a9a9a9"
+              // onChangeText = {this.setURL}
+              />
+            </CardItem>
             <CardItem>
               <Body>
-                <Text>
-                   Status: <Text>{this.state.connected ? 'Connected to ' + this.state.ws_url : 'Disconnected'}</Text>
+                
+                <Text style={{paddingBottom : 5}}>
+                   Status : <Text>{this.state.connected ? 'Connected to ' + this.state.ws_url : 'Disconnected'}</Text>
                 </Text>
-                <Text>
-                   No of whistles: <Text>{this.state.currWhistleCount}</Text><Text>/{this.state.totalWhistleCount}</Text>
+                <Text style={{paddingBottom : 5}}>
+                   No of whistles : <Text>{this.state.currWhistleCount}</Text><Text>/{this.state.totalWhistleCount}</Text>
                 </Text>
-                <Text>
-                  Timer:
+                <Text style={{paddingBottom : 5}}>
+                  Timer :
                 </Text>
                  
               </Body>
@@ -182,9 +195,9 @@ export default class Home extends React.Component {
             </CardItem>
             <CardItem style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}  footer>
                 <Button  style={{ backgroundColor: 'transparent', elevation : 0 }} onPress = {() => this.stopWhistleCount()}> 
-                  <Text style={{color : "#5067FF"}} >Reset</Text>
+                  <Text style={{color : "#4885ed"}} >Reset</Text>
                 </Button>
-                <Button  rounded block onPress={() => {this.setState({ DialogState: true });}}>
+                <Button style={{ backgroundColor: '#4885ed'}} rounded block onPress={() => {this.setState({ DialogState: true });}}>
                   <Text>Count Whistles</Text>
                 </Button>
             </CardItem>
@@ -206,9 +219,9 @@ export default class Home extends React.Component {
             />
           }
           footer={
-            <DialogFooter>
+            <DialogFooter >
               <DialogButton></DialogButton>
-              <DialogButton style={{borderColor : 'white'}}
+              <DialogButton textStyle={{color: '#4885ed'}} style={{borderColor: 'white'}}
                 text="Cancel"
                 onPress={() => {this.setState({ DialogState: false });}}
               />
@@ -289,5 +302,17 @@ const styles = StyleSheet.create({
       paddingBottom: 20,
       borderRadius: 10,
   },
+  input:{
+      margin: 15,
+      height: 40,
+      borderColor: '#a9a9a9',
+      borderWidth: 1,
+      paddingLeft: 15,
+      paddingTop: 5,
+      paddingBottom: 5,
+      flex: 1,
+      fontSize: 20,
+      borderRadius: 20
+  }
   
 });
