@@ -8,7 +8,7 @@ const dataArray = [
 
 ];
 
-const SendActions = ['whistleCount', ];
+const SendActions = ['whistleStart', 'whistleStop' ];
 const RecvActions = ['whistleInc', 'tempHigh', 'gasLeak'];
 
 var cooker = require('./assets/whistle4.png')
@@ -107,11 +107,18 @@ export default class Home extends React.Component {
 
   startWhistleCount(){
     this.setState({ DialogState: false });
-    this.sendMessage('whistleCount',this.state.count);
+    this.sendMessage('whistleStart', this.state.count);
     this.setState({totalWhistleCount : this.state.count});
   }
 
-  resetWhistleCount(){
+  stopWhistleCount(){
+    this.setState({currWhistleCount : 0});
+    this.setState({totalWhistleCount : 0});
+    this.sendMessage('whistleStop', 0);
+
+  }
+
+  clearWhistleCount(){
     this.setState({count : 0});
   }
 
@@ -173,8 +180,11 @@ export default class Home extends React.Component {
               </Body>
               
             </CardItem>
-            <CardItem footer>
-                <Button style={{ position:'absolute', right:10, bottom:0 }} rounded block onPress={() => {this.setState({ DialogState: true });}}>
+            <CardItem style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end'}}  footer>
+                <Button  style={{ backgroundColor: 'transparent', elevation : 0 }} onPress = {() => this.stopWhistleCount()}> 
+                  <Text style={{color : "#5067FF"}} >Reset</Text>
+                </Button>
+                <Button  rounded block onPress={() => {this.setState({ DialogState: true });}}>
                   <Text>Count Whistles</Text>
                 </Button>
             </CardItem>
@@ -226,8 +236,8 @@ export default class Home extends React.Component {
             </CardItem>
 
             <CardItem footer>
-              <Button style={{ backgroundColor: '#ef5350', paddingHorizontal : 10 }} rounded onPress = {() => this.resetWhistleCount()}>
-                <Text>Reset</Text>
+              <Button style={{ backgroundColor: '#ef5350', paddingHorizontal : 10 }} rounded onPress = {() => this.clearWhistleCount()}>
+                <Text>Clear</Text>
               </Button>
             <Right/>
             <Right/>
