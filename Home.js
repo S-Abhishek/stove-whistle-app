@@ -9,7 +9,7 @@ const dataArray = [
 ];
 
 const SendActions = ['whistleCount', ];
-const RecvActions = ['whistleInc',];
+const RecvActions = ['whistleInc', 'tempHigh', 'gasLeak'];
 
 var cooker = require('./assets/whistle4.png')
 
@@ -21,24 +21,24 @@ import { getStatusBarHeight } from 'react-native-status-bar-height';
 export default class Home extends React.Component {
 
   // For white titlebar
-  // static navigationOptions = {
-  //   title: 'Whistle Counter',
-  //   height: 60,
-  //   headerStyle: {
-  //     shadowOpacity: 0,
-  //     shadowOffset: {
-  //       height: 0
-  //     },
-  //     shadowRadius: 0,
-  //     borderBottomWidth: 0,
-  //     elevation: 0
-  //   }
-    
-  // }
-
   static navigationOptions = {
-    header : null
+    title: 'Whistle Counter',
+    height: 60,
+    headerStyle: {
+      shadowOpacity: 0,
+      shadowOffset: {
+        height: 0
+      },
+      shadowRadius: 0,
+      borderBottomWidth: 0,
+      elevation: 0
+    }
+    
   }
+
+  // static navigationOptions = {
+  //   header : null
+  // }
 
   constructor(props) {
     super(props);
@@ -47,6 +47,7 @@ export default class Home extends React.Component {
                    DialogState: false, 
                    loading : true, 
                    connected : false,
+                   ws_url : "echo.websocket.org",
                    currWhistleCount : 0,
                    totalWhistleCount : 0,
                    count : 0,
@@ -61,13 +62,14 @@ export default class Home extends React.Component {
   }
 
   initSocket(){
-    this.client = new WebSocket('ws://echo.websocket.org');
+    this.client = new WebSocket('ws://' + this.state.ws_url);
 
     this.client.onopen = connection => {
       console.log( new Date().toISOString() + ' Connected');
       this.setState({connected : true})
     };
 
+    this.client.onclose = () => this.setState({connected : false});
     // Recieve and handle messages
     this.client.onmessage = msg => {
       console.log(msg.data + " recieved");
@@ -80,6 +82,8 @@ export default class Home extends React.Component {
         {
           case 'whistleInc':
             this.setState(prevState => ({ currWhistleCount : prevState.currWhistleCount + 1}));
+            break;
+          case 'tempHigh':
             break;
   
         }
@@ -137,8 +141,8 @@ export default class Home extends React.Component {
       return (
         <Container>
           {/* For white titlebar */}
-          {/* <StatusBar barStyle="dark-content" backgroundColor = "#FFFFFF" /> */}
-          <Header>
+          <StatusBar barStyle="dark-content" backgroundColor = "#FFFFFF" />
+          {/* <Header>
             <Body style={styles.image}>
               <Title>Whistle Counter</Title>
             </Body>
@@ -147,7 +151,7 @@ export default class Home extends React.Component {
                 <Icon name="more" />
               </Button>
             </Right>
-        </Header>
+          </Header> */}
           <View style={{flex:1}}>
           <Content padder>
           <Card style={styles.card}>
@@ -157,7 +161,7 @@ export default class Home extends React.Component {
             <CardItem>
               <Body>
                 <Text>
-                   Status: <Text>{this.state.connected ? 'Connected' : 'Disconnected'}</Text>
+                   Status: <Text>{this.state.connected ? 'Connected to ' + this.state.ws_url : 'Disconnected'}</Text>
                 </Text>
                 <Text>
                    No of whistles: <Text>{this.state.currWhistleCount}</Text><Text>/{this.state.totalWhistleCount}</Text>
@@ -194,9 +198,8 @@ export default class Home extends React.Component {
           footer={
             <DialogFooter>
               <DialogButton></DialogButton>
-              <DialogButton
+              <DialogButton style={{borderColor : 'white'}}
                 text="Cancel"
-                bordered
                 onPress={() => {this.setState({ DialogState: false });}}
               />
             </DialogFooter>
@@ -274,7 +277,7 @@ const styles = StyleSheet.create({
       paddingRight: 5,
       paddingTop: 10,
       paddingBottom: 20,
-      borderRadius: 10
+      borderRadius: 10,
   },
   
 });

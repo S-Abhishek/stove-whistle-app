@@ -28,6 +28,9 @@
     "description": "",
     "androidStatusBar":{
       "backgroundColor":"#000000"
+    },
+    "android": {
+      "package": "com.whistlecorp.whistlecount"
     }
   }
 }
