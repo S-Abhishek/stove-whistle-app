@@ -35,6 +35,10 @@ void setup() {
 
 void getIP(){
   Serial.println("Getting IP of 8266");
+
+  while((data1 = Serial1.read()) != 178)
+    if(data1 != -1)
+      Serial.write(data1);
   while((data1 = Serial1.peek()) == -1);
   ip0 = Serial1.read();
   Serial.println(ip0);
@@ -141,11 +145,11 @@ void sendMsg(uint8_t msg){
 void loop() {
   handleMessages();
   if(whistle_detect()){
-    sendMsg(210);
+    sendMsg(200);
   }
   if(is_temp_high()){
     turn_fan_on();
-    sendMsg(211);
+    sendMsg(210);
   }
   else{
     turn_fan_off();

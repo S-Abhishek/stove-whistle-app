@@ -8,22 +8,22 @@ ESP8266WiFiMulti WiFiMulti;
 
 WebSocketsServer webSocket = WebSocketsServer(81);
 
-#define USE_SERIAL Serial
 char msgbuf[2];
 int is_connected = 0;
-void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
 
+void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
+    delay(1);
     switch(type) {
         case WStype_DISCONNECTED:
-            USE_SERIAL.printf("[%u] Disconnected!\n", num);
+            if(num == 0)
+              is_connected = 0;
             break;
         case WStype_CONNECTED:
-            {
-                IPAddress ip = webSocket.remoteIP(num);
-        				// send message to client
-                is_connected = 1;
-        				webSocket.sendTXT(num, "Connected");
-            }
+                if(num == 0){
+                  
+                  is_connected = 1;
+        				  webSocket.sendTXT(num, "Connected");
+                }
             break;
         case WStype_TEXT:
             
@@ -32,14 +32,6 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length
               handleMessages();
               Serial.write(msg);
             }
-            
-            
-
-            // send message to client
-            // webSocket.sendTXT(num, "message here");
-
-            // send data to all connected clients
-            // webSocket.broadcastTXT("message here");
             break;
     }
 
@@ -68,17 +60,13 @@ int handleMessages(){
 }
 
 void setup() {
-    // USE_SERIAL.begin(921600);
-    USE_SERIAL.begin(115200);
-
-//    Serial.setDebugOutput(true);
+    Serial.begin(115200);
     Serial.setDebugOutput(false);
     delay(10);
     system_set_os_print(0);
     delay(10);
 
     for(uint8_t t = 4; t > 0; t--) {
-        USE_SERIAL.flush();
         delay(1000);
     }
 
@@ -89,6 +77,8 @@ void setup() {
     }
 
     IPAddress ip = WiFi.localIP();
+    Serial.write(178);
+    delay(10);
     Serial.write(ip[0]);
     delay(10);
     Serial.write(ip[1]);
