@@ -11,7 +11,7 @@ const dataArray = [
 const SendActions = ['whistleStart', 'whistleStop' ];
 const RecvActions = ['whistleInc', 'tempHigh', 'gasLeak'];
 
-var cooker = require('./assets/whistle4.png')
+var cooker = require('./assets/whistle4.png');
 
 //To prevent overlap with notification bar
 import { getStatusBarHeight } from 'react-native-status-bar-height';
@@ -51,6 +51,7 @@ export default class Home extends React.Component {
                    currWhistleCount : 0,
                    totalWhistleCount : 0,
                    count : 0,
+                   inputValue : ''
                  };
 
     this.sendMessage = this.sendMessage.bind(this);
@@ -62,11 +63,12 @@ export default class Home extends React.Component {
   }
 
   initSocket(){
+    console.log(this.state.ws_url);
     this.client = new WebSocket('ws://' + this.state.ws_url);
 
     this.client.onopen = connection => {
       console.log( new Date().toISOString() + ' Connected');
-      this.setState({connected : true})
+      this.setState({connected : true});
     };
 
     this.client.onclose = () => this.setState({connected : false});
@@ -96,6 +98,13 @@ export default class Home extends React.Component {
     };
   }
 
+  reinitSocket(){
+    console.log("reinit");
+    this.client.close();
+    var newIP = this.state.inputValue;
+    this.setState({ws_url: newIP}, () => {this.initSocket();});
+  }
+
   sendMessage(action, data){
     if(this.client.OPEN)
     {
@@ -106,16 +115,13 @@ export default class Home extends React.Component {
   }
 
   startWhistleCount(){
-    this.setState({ DialogState: false });
+    this.setState({ DialogState: false, totalWhistleCount: this.state.count});
     this.sendMessage('whistleStart', this.state.count);
-    this.setState({totalWhistleCount: this.state.count});
   }
 
   stopWhistleCount(){
-    this.setState({currWhistleCount: 0});
-    this.setState({totalWhistleCount: 0});
+    this.setState({currWhistleCount: 0, totalWhistleCount: 0});
     this.sendMessage('whistleStop', 0);
-
   }
 
   clearWhistleCount(){
@@ -165,17 +171,21 @@ export default class Home extends React.Component {
             <CardItem header>
               <Text style={{ fontSize: 25 }}>Whistle 1</Text>
             </CardItem>
-            <CardItem style={{flex: 1, flexDirection: 'row'}}>
+            <CardItem style={{flex: 1, flexDirection: 'row', justifyContent:'center', alignItems:'center'}}>
               <Text>
                 IP :
               </Text>
               <TextInput style = {styles.input}
+              ref = "ip"
               autoCapitalize = "none"
               borderColor = "#000000"
               placeholder = {this.state.ws_url}
               placeholderTextColor = "#a9a9a9"
-              // onChangeText = {this.setURL}
+              onChangeText = {(txt) => this.setState({inputValue: txt})}
               />
+              <Button light rounded style={{backgroundColor:"#66BB6A", marginTop: 13  }} onPress = {() => this.reinitSocket()} >
+                  <Icon style={{color : 'white'}} name = "ios-arrow-round-forward" />
+              </Button>
             </CardItem>
             <CardItem>
               <Body>
