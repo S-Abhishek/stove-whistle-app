@@ -57,7 +57,7 @@ void getIP(){
 }
 
 int handleMessages(){
-  Serial.println("[Checking msg]");
+//  Serial.println("[Checking msg]");
   uint8_t num_tries = 5;
   uint8_t data, data1; 
   for(uint8_t i = num_tries; i > 0; i--){
@@ -72,6 +72,59 @@ int handleMessages(){
     delay(100);
   }
 }
+
+int whistle_detect1(){
+
+  unsigned long sum1 = 0, sum2 = 0, sum3 = 0, b = 0;
+  for(int i = 0; i < 5; i++){
+    b = 1000000/(2*pulseIn(A1,HIGH));
+    if(b < 30000)
+      sum1 += b;
+  }
+
+  sum1 /= 5;
+  delay(200);
+  
+  for(int i = 0; i < 5; i++){
+    b = 1000000/(2*pulseIn(A1,HIGH));
+    if(b < 30000)
+      sum2 += b;
+  }
+
+  sum2 /= 5;
+  delay(200);
+  
+  for(int i = 0; i < 5; i++){
+    b = 1000000/(2*pulseIn(A1,HIGH));
+    if(b < 30000)
+      sum3 += b;
+  }
+
+  sum3 /= 5;
+
+  Serial.print(sum1);
+  Serial.print(" ");
+  Serial.print(sum2);
+  Serial.print(" ");
+  Serial.println(sum3);
+  
+  sum1 = (sum1 + sum2 + sum3)/3;
+  Serial.print("[Freq] ");
+  Serial.println(sum1);
+  if(sum1 >= 10000){
+    t2 = millis();
+    if(t2 - t1 > 10000){
+      t1 = millis();
+      Serial.println("Whistle");
+      return 1;
+    }
+    else{
+      Serial.println("Same whistle");
+    }
+  }
+  return 0;
+}
+
 
 int whistle_detect(){
   
@@ -122,18 +175,18 @@ int is_temp_high(){
   T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
   Tc = T - 273.15;
 
-  Serial.print("[TEMP] ");
-  Serial.println(Tc);
+//  Serial.print("[TEMP] ");
+//  Serial.println(Tc);
   return Tc > MAX_TEMP;
 }
 
 void turn_fan_on(){
-  Serial.println("Turning on Fan becoming too hot");
+//  Serial.println("Turning on Fan becoming too hot");
   analogWrite(A0,1024);
 }
 
 void turn_fan_off(){
-  Serial.println("Fan off");
+//  Serial.println("Fan off");
   analogWrite(A0,0);
 }
 
@@ -144,7 +197,7 @@ void sendMsg(uint8_t msg){
 
 void loop() {
   handleMessages();
-  if(whistle_detect()){
+  if(whistle_detect1()){
     sendMsg(200);
   }
   if(is_temp_high()){
