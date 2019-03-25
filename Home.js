@@ -3,6 +3,7 @@ import { StyleSheet, View , Image, StatusBar, TextInput } from 'react-native';
 import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 import { Font, AppLoading } from 'expo';
+import { Dimensions } from 'react-native'
 const dataArray = [
   { title: "Whistle 1", content: "Disconnected" },
 
@@ -168,9 +169,6 @@ export default class Home extends React.Component {
           <View style={{flex:1}}>
           <Content padder>
           <Card style={styles.card}>
-            <CardItem header>
-              <Text style={{ fontSize: 25 }}>Whistle 1</Text>
-            </CardItem>
             <CardItem style={{flex: 1, flexDirection: 'row', justifyContent:'center', alignItems:'center'}}>
               <Text>
                 IP :
@@ -189,10 +187,22 @@ export default class Home extends React.Component {
             </CardItem>
             <CardItem>
               <Body>
-                
                 <Text style={{paddingBottom : 5}}>
                    Status : <Text>{this.state.connected ? 'Connected to ' + this.state.ws_url : 'Disconnected'}</Text>
                 </Text>
+              </Body>
+            </CardItem>
+          </Card>
+          
+          <Card style={styles.card}>
+            <CardItem header>
+              <Text style={{ fontSize: 25 }}>Whistle 1</Text>
+            </CardItem>
+            
+            <CardItem>
+              <Body>
+                
+                
                 <Text style={{paddingBottom : 5}}>
                    No of whistles : <Text>{this.state.currWhistleCount}</Text><Text>/{this.state.totalWhistleCount}</Text>
                 </Text>
@@ -212,6 +222,28 @@ export default class Home extends React.Component {
                 </Button>
             </CardItem>
           </Card>
+          
+          <Card style={styles.card1}>
+            <CardItem header style={{ backgroundColor:'#F25230' }}>
+              <Text style= {{ fontSize: 25 }}>Gas leakage </Text>
+            </CardItem>
+            <CardItem style={{flexDirection: 'row',backgroundColor:'#F25230'}}>
+              <Text style={{}}>
+                Status:
+              </Text>
+            </CardItem>
+          </Card>
+          <Card style={styles.card1}>
+            <CardItem header style={{ backgroundColor:'#F25230' }}>
+              <Text style= {{ fontSize: 25 }}>Temperature</Text>
+            </CardItem>
+            <CardItem style={{flexDirection: 'row',backgroundColor:'#F25230'}}>
+              <Text style={{}}>
+                Status:
+              </Text>
+            </CardItem>
+          </Card>
+          
                      
 
           <Dialog
@@ -311,6 +343,15 @@ const styles = StyleSheet.create({
       paddingTop: 10,
       paddingBottom: 20,
       borderRadius: 10,
+  },
+  card1:{
+      backgroundColor:'#F25230',
+      paddingLeft: 5,
+      paddingRight: 5,
+      paddingTop: 10,
+      paddingBottom: 20,
+      borderRadius: 10,
+      width:((Dimensions.get('window').width)/2),
   },
   input:{
       margin: 15,
