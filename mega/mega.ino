@@ -1,3 +1,9 @@
+#include <Servo.h>
+
+// For servo
+Servo myservo;
+int pos = 0;
+
 int data1 = 0;
 
 // IP values
@@ -8,7 +14,8 @@ uint8_t ip3 = 0;
 
 // For whistle detect
 long a1,a2,a3,b1,b2,b3;
-int whistle_count = 0;
+int whistle_count = 1;
+int is_counting = 1;
 unsigned long t2 = 0 ,t1 = 0;
 
 // For temp detect
@@ -25,6 +32,10 @@ void setup() {
   Serial.begin(9600);
   Serial1.begin(115200);
 
+  // Servo pin
+  myservo.attach(9);
+  myservo.write(0);  
+  
   // Whistle mic
   pinMode(A1,INPUT);
   
@@ -195,10 +206,25 @@ void sendMsg(uint8_t msg){
   Serial1.write(msg);
 }
 
+void turn_stove_off(){
+  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+}
+
 void loop() {
   handleMessages();
   if(whistle_detect1()){
-    sendMsg(200);
+    if(is_counting){
+      whistle_count--;
+      if(whistle_count == 0){
+        Serial.println("zero");
+        turn_stove_off();
+      }
+      sendMsg(200);
+    } 
   }
   if(is_temp_high()){
     turn_fan_on();

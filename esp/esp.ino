@@ -67,12 +67,14 @@ void setup() {
     delay(10);
 
     for(uint8_t t = 4; t > 0; t--) {
+      Serial.println("Starting");
         delay(1000);
     }
 
     WiFiMulti.addAP("Chendur", "Welcome@321");
 
     while(WiFiMulti.run() != WL_CONNECTED) {
+      Serial.println("Connecting");
         delay(100);
     }
 
