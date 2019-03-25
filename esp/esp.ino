@@ -59,6 +59,7 @@ int handleMessages(){
   }
 }
 
+
 void setup() {
     Serial.begin(115200);
     Serial.setDebugOutput(false);
@@ -67,14 +68,14 @@ void setup() {
     delay(10);
 
     for(uint8_t t = 4; t > 0; t--) {
-      Serial.println("Starting");
+      Serial.println("[8266] Starting");
         delay(1000);
     }
 
-    WiFiMulti.addAP("Chendur", "Welcome@321");
+    WiFiMulti.addAP("testwifi", "test@321");
 
     while(WiFiMulti.run() != WL_CONNECTED) {
-      Serial.println("Connecting");
+      Serial.println("[8266] Connecting");
         delay(100);
     }
 

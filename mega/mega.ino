@@ -2,7 +2,7 @@
 
 // For servo
 Servo myservo;
-int pos = 0;
+int currpos = 0;
 
 int data1 = 0;
 
@@ -14,8 +14,8 @@ uint8_t ip3 = 0;
 
 // For whistle detect
 long a1,a2,a3,b1,b2,b3;
-int whistle_count = 1;
-int is_counting = 1;
+int whistle_count = 0;
+int is_counting = 0;
 unsigned long t2 = 0 ,t1 = 0;
 
 // For temp detect
@@ -34,7 +34,7 @@ void setup() {
 
   // Servo pin
   myservo.attach(9);
-  myservo.write(0);  
+  myservo.write(currpos);  
   
   // Whistle mic
   pinMode(A1,INPUT);
@@ -70,13 +70,41 @@ void getIP(){
 int handleMessages(){
 //  Serial.println("[Checking msg]");
   uint8_t num_tries = 5;
-  uint8_t data, data1; 
+  uint8_t data, data1, action, info; 
   for(uint8_t i = num_tries; i > 0; i--){
 
     if((data = Serial1.peek()) != 255 ){
       while((data = Serial1.peek()) != 255  && (data1 = Serial1.read())/100 == 1)
       {
-          Serial.println(data1);
+          data1 = data1 % 100;
+          action = data1/10;
+          info = data1%10;
+          switch(action)
+          {
+            case 0:
+              Serial.print("Start counting to ");
+              Serial.println(info);
+              is_counting = 1;
+              whistle_count = info;
+              break;
+
+            case 1:
+              Serial.println("Stop counting");
+              is_counting = 0;
+              whistle_count = 0;
+              break;
+            
+            case 2:
+              Serial.println("Turning stove off");
+              turn_stove_off();
+              break;
+
+            case 3:
+              Serial.println("Turning stove to sim");
+              turn_stove_sim();
+              break;
+
+          }
       }
       break;
     }
@@ -122,9 +150,9 @@ int whistle_detect1(){
   sum1 = (sum1 + sum2 + sum3)/3;
   Serial.print("[Freq] ");
   Serial.println(sum1);
-  if(sum1 >= 10000){
+  if(sum1 >= 9000){
     t2 = millis();
-    if(t2 - t1 > 10000){
+    if(t2 - t1 > 15000){
       t1 = millis();
       Serial.println("Whistle");
       return 1;
@@ -207,8 +235,17 @@ void sendMsg(uint8_t msg){
 }
 
 void turn_stove_off(){
-  for (pos = 0; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+  Serial.println("Turning stove off");
+  for (int pos = currpos + 1; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+}
+
+void turn_stove_sim(){
+  Serial.println("Turning stove to sim");
+  for (int pos = currpos; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
   }
@@ -220,6 +257,7 @@ void loop() {
     if(is_counting){
       whistle_count--;
       if(whistle_count == 0){
+        is_counting = 0;
         Serial.println("zero");
         turn_stove_off();
       }

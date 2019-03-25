@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View , Image, StatusBar, TextInput } from 'react-native';
-import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input} from 'native-base';
+import { Container, Header, Content, Accordion , Card, CardItem, Thumbnail, Text, Button, Icon, Left, Body, Right , Title , Footer, FooterTab, Fab, Item, Input, Row} from 'native-base';
 import Dialog, { DialogContent, DialogTitle, SlideAnimation, DialogFooter, DialogButton } from 'react-native-popup-dialog';
 import { Font, AppLoading } from 'expo';
 import { Dimensions } from 'react-native'
@@ -52,7 +52,9 @@ export default class Home extends React.Component {
                    currWhistleCount : 0,
                    totalWhistleCount : 0,
                    count : 0,
-                   inputValue : ''
+                   inputValue : '',
+                   isGasLeak: false,
+                   isTempHigh: false,
                  };
 
     this.sendMessage = this.sendMessage.bind(this);
@@ -60,7 +62,6 @@ export default class Home extends React.Component {
 
   componentWillMount() {
     this.loadFonts();
-    this.initSocket();
   }
 
   initSocket(){
@@ -87,7 +88,11 @@ export default class Home extends React.Component {
             this.setState(prevState => ({ currWhistleCount : prevState.currWhistleCount + 1}));
             break;
           case 'tempHigh':
+            this.setState({isTempHigh : true});
             break;
+          case 'gasLeak':
+            this.setState({isGasLeak: true});
+            break
   
         }
       }
@@ -116,13 +121,19 @@ export default class Home extends React.Component {
   }
 
   startWhistleCount(){
-    this.setState({ DialogState: false, totalWhistleCount: this.state.count});
-    this.sendMessage('whistleStart', this.state.count);
+    if(this.state.connected){
+      this.setState({ DialogState: false, totalWhistleCount: this.state.count});
+      this.sendMessage('whistleStart', this.state.count);
+    }
+    
   }
 
   stopWhistleCount(){
-    this.setState({currWhistleCount: 0, totalWhistleCount: 0});
-    this.sendMessage('whistleStop', 0);
+    if(this.state.connected){
+      this.setState({currWhistleCount: 0, totalWhistleCount: 0});
+      this.sendMessage('whistleStop', 0);
+    }
+    
   }
 
   clearWhistleCount(){
@@ -201,15 +212,12 @@ export default class Home extends React.Component {
             
             <CardItem>
               <Body>
-                
-                
                 <Text style={{paddingBottom : 5}}>
                    No of whistles : <Text>{this.state.currWhistleCount}</Text><Text>/{this.state.totalWhistleCount}</Text>
                 </Text>
                 <Text style={{paddingBottom : 5}}>
                   Timer :
                 </Text>
-                 
               </Body>
               
             </CardItem>
@@ -222,30 +230,28 @@ export default class Home extends React.Component {
                 </Button>
             </CardItem>
           </Card>
-          
-          <Card style={styles.card1}>
-            <CardItem header style={{ backgroundColor:'#F25230' }}>
-              <Text style= {{ fontSize: 25 }}>Gas leakage </Text>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+          <Card style={[styles.card1, {backgroundColor : this.state.isGasLeak ? 'red' : 'white'}]}>
+            <CardItem header>
+              <Text style= {{ fontSize: 20 }}>Gas leakage </Text>
             </CardItem>
-            <CardItem style={{flexDirection: 'row',backgroundColor:'#F25230'}}>
+            <CardItem style={{flexDirection: 'row'}}>
               <Text style={{}}>
-                Status:
+                <Text>{this.state.isGasLeak ? 'Yes' : 'No'}</Text>
               </Text>
             </CardItem>
           </Card>
-          <Card style={styles.card1}>
-            <CardItem header style={{ backgroundColor:'#F25230' }}>
-              <Text style= {{ fontSize: 25 }}>Temperature</Text>
+          <Card style={[styles.card1, {backgroundColor : this.state.isTempHigh ? 'red' : 'white'}]}>
+            <CardItem header>
+              <Text style= {{ fontSize: 20 }}>Temperature</Text>
             </CardItem>
-            <CardItem style={{flexDirection: 'row',backgroundColor:'#F25230'}}>
+            <CardItem style={{flexDirection: 'row'}}>
               <Text style={{}}>
-                Status:
+                <Text>{this.state.isTempHigh ? 'High' : 'Normal'}</Text>
               </Text>
             </CardItem>
           </Card>
-          
-                     
-
+          </View>
           <Dialog
           onDismiss={() => {this.setState({ DialogState: false });}}
           width={0.9}
@@ -305,16 +311,6 @@ export default class Home extends React.Component {
         </Dialog>
 
           </Content>
-          <Fab
-              active={this.state.active}
-              direction="up"
-              containerStyle={{ }}
-              style={{ backgroundColor: '#5067FF' }}
-              position="bottomRight"
-              onPress={() => this.setState({ active: !this.state.active })}>
-              <Icon name="add" />
-              
-            </Fab>
           </View>
         </Container>
       );
@@ -345,13 +341,12 @@ const styles = StyleSheet.create({
       borderRadius: 10,
   },
   card1:{
-      backgroundColor:'#F25230',
       paddingLeft: 5,
       paddingRight: 5,
       paddingTop: 10,
       paddingBottom: 20,
       borderRadius: 10,
-      width:((Dimensions.get('window').width)/2),
+      flex: 1,
   },
   input:{
       margin: 15,
