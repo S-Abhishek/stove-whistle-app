@@ -68,16 +68,21 @@ export default class Home extends React.Component {
     console.log(this.state.ws_url);
     this.client = new WebSocket('ws://' + this.state.ws_url);
 
-    this.client.onopen = connection => {
-      console.log( new Date().toISOString() + ' Connected');
-      this.setState({connected : true});
+    this.client.onclose = () => {
+      console.log("Socket closed . . . reiniting socket");
+      this.setState({connected : false});
+      this.initSocket();
     };
 
-    this.client.onclose = () => this.setState({connected : false});
     // Recieve and handle messages
     this.client.onmessage = msg => {
       console.log(msg.data + " recieved");
-      msg = msg.data.split(',');
+      msg = msg.data;
+      if( msg == 'Connected'){
+        console.log(msg);
+        this.setState({connected : true});
+        return;
+      }
       const action = +msg[0];
       const data = +msg[1];
       try
@@ -92,7 +97,7 @@ export default class Home extends React.Component {
             break;
           case 'gasLeak':
             this.setState({isGasLeak: true});
-            break
+            break;
   
         }
       }
@@ -106,15 +111,19 @@ export default class Home extends React.Component {
 
   reinitSocket(){
     console.log("reinit");
-    this.client.close();
     var newIP = this.state.inputValue;
-    this.setState({ws_url: newIP}, () => {this.initSocket();});
+    this.setState({ws_url: newIP}, () => {
+      if(this.client)
+        this.client.close();
+      else
+        this.initSocket();
+    });
   }
 
   sendMessage(action, data){
-    if(this.client.OPEN)
+    if(this.client && this.client.OPEN)
     {
-      let encoded = SendActions.indexOf(action) + ',' + data.toString();
+      let encoded = SendActions.indexOf(action) + data.toString();
       console.log('Sending ' + action + ' : ' + data + ' as ' + encoded);
       this.client.send(encoded);
     }
@@ -231,24 +240,20 @@ export default class Home extends React.Component {
             </CardItem>
           </Card>
           <View style={{flex: 1, flexDirection: 'row'}}>
-          <Card style={[styles.card1, {backgroundColor : this.state.isGasLeak ? 'red' : 'white'}]}>
-            <CardItem header>
-              <Text style= {{ fontSize: 20 }}>Gas leakage </Text>
+          <Card style={[styles.card1, {backgroundColor: this.state.isGasLeak ? '#e57373' : 'white'}]}>
+            <CardItem style={{backgroundColor: this.state.isGasLeak ? '#e57373' : 'white'}} header>
+              <Text style= {[{color: this.state.isGasLeak ? 'white' : 'black'}, { fontSize: 20, }]}>Gas leakage </Text>
             </CardItem>
-            <CardItem style={{flexDirection: 'row'}}>
-              <Text style={{}}>
-                <Text>{this.state.isGasLeak ? 'Yes' : 'No'}</Text>
-              </Text>
+            <CardItem style={[{backgroundColor: this.state.isGasLeak ? '#e57373' : 'white'}, {flexDirection: 'row'}]}>
+              <Text style={{color: this.state.isGasLeak ? 'white' : 'black'}} >{this.state.isGasLeak ? 'Yes' : 'No'}</Text>
             </CardItem>
           </Card>
-          <Card style={[styles.card1, {backgroundColor : this.state.isTempHigh ? 'red' : 'white'}]}>
-            <CardItem header>
-              <Text style= {{ fontSize: 20 }}>Temperature</Text>
+          <Card style={[styles.card1, {backgroundColor: this.state.isTempHigh ? '#e57373' : 'white'}]}>
+            <CardItem style={{backgroundColor: this.state.isTempHigh ? '#e57373' : 'white'}} header>
+              <Text style= {[{color: this.state.isTempHigh ? 'white' : 'black'}, { fontSize: 20}]}>Temperature</Text>
             </CardItem>
-            <CardItem style={{flexDirection: 'row'}}>
-              <Text style={{}}>
-                <Text>{this.state.isTempHigh ? 'High' : 'Normal'}</Text>
-              </Text>
+            <CardItem style={[{backgroundColor: this.state.isTempHigh ? '#e57373' : 'white'}, {flexDirection: 'row'}]}>
+                <Text style={{color: this.state.isTempHigh ? 'white' : 'black'}}>{this.state.isTempHigh ? 'High' : 'Normal'}</Text>
             </CardItem>
           </Card>
           </View>
@@ -321,7 +326,7 @@ export default class Home extends React.Component {
 
 
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.flatten({
   Container: {
     flex: 1,
   },
@@ -359,6 +364,5 @@ const styles = StyleSheet.create({
       flex: 1,
       fontSize: 20,
       borderRadius: 20
-  }
-  
+  },  
 });

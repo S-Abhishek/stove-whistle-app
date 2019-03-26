@@ -2,7 +2,7 @@
 
 // For servo
 Servo myservo;
-int currpos = 0;
+int pos = 90;
 
 int data1 = 0;
 
@@ -34,7 +34,7 @@ void setup() {
 
   // Servo pin
   myservo.attach(9);
-  myservo.write(currpos);  
+  myservo.write(pos);  
   
   // Whistle mic
   pinMode(A1,INPUT);
@@ -214,8 +214,8 @@ int is_temp_high(){
   T = (1.0 / (c1 + c2*logR2 + c3*logR2*logR2*logR2));
   Tc = T - 273.15;
 
-//  Serial.print("[TEMP] ");
-//  Serial.println(Tc);
+  Serial.print("[TEMP] ");
+  Serial.println(Tc);
   return Tc > MAX_TEMP;
 }
 
@@ -234,20 +234,22 @@ void sendMsg(uint8_t msg){
   Serial1.write(msg);
 }
 
-void turn_stove_off(){
+void turn_stove_sim(){
   Serial.println("Turning stove off");
-  for (int pos = currpos + 1; pos <= 180; pos += 1) { // goes from 0 degrees to 180 degrees
+  while(pos <= 180) { // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
+    pos += 1;
   }
 }
 
-void turn_stove_sim(){
+void turn_stove_off(){
   Serial.println("Turning stove to sim");
-  for (int pos = currpos; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+  while (pos >= 0) { // goes from 180 degrees to 0 degrees
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
+    pos -= 1;
   }
 }
 
@@ -265,8 +267,9 @@ void loop() {
     } 
   }
   if(is_temp_high()){
-    turn_fan_on();
+    Serial.println("HOT");
     sendMsg(210);
+    turn_fan_on();
   }
   else{
     turn_fan_off();
