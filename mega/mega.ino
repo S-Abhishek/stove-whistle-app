@@ -2,7 +2,7 @@
 
 // For servo
 Servo myservo;
-int pos = 90;
+int pos = 0;
 
 int data1 = 0;
 
@@ -26,6 +26,16 @@ float logR2, R2, T, Tc, Tf;
 float c1 = 1.009249522e-03, c2 = 2.378405444e-04, c3 = 2.019202697e-07;
 int MAX_TEMP = 35;
 
+// For Gas leak
+float sensorValue1;
+int GAS_LIMIT = 230;
+
+// For Fan
+int fan = 8;
+
+// For buzzer
+int buzz = 7; 
+
 void setup() {
   //Serial Begin at 9600 Baud 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -34,7 +44,7 @@ void setup() {
 
   // Servo pin
   myservo.attach(9);
-  myservo.write(pos);  
+//  myservo.write(pos);  
   
   // Whistle mic
   pinMode(A1,INPUT);
@@ -207,6 +217,16 @@ int whistle_detect(){
   return 0;
 }
 
+int is_gas_leak(){
+  sensorValue1 = analogRead(A0);
+  Serial.print("Gas level :");
+  Serial.println(sensorValue1);
+  if( sensorValue1 > GAS_LIMIT )
+     return 1;
+  else
+     return 0; 
+}
+
 int is_temp_high(){
   Vo = analogRead(A3);
   R2 = R1 * (1023.0 / (float)Vo - 1.0);
@@ -219,14 +239,28 @@ int is_temp_high(){
   return Tc > MAX_TEMP;
 }
 
+
 void turn_fan_on(){
 //  Serial.println("Turning on Fan becoming too hot");
-  analogWrite(A0,1024);
+  digitalWrite(fan, HIGH);
 }
 
 void turn_fan_off(){
 //  Serial.println("Fan off");
-  analogWrite(A0,0);
+  digitalWrite(fan, LOW);
+}
+
+void turn_buzzer_on()
+{
+  digitalWrite(buzz, HIGH);
+  delay(500);
+  digitalWrite(buzz, LOW);
+  delay(500);
+}
+
+void turn_buzzer_off()
+{
+  digitalWrite(buzz, LOW);
 }
 
 void sendMsg(uint8_t msg){
@@ -235,21 +269,19 @@ void sendMsg(uint8_t msg){
 }
 
 void turn_stove_sim(){
-  Serial.println("Turning stove off");
-  while(pos <= 180) { // goes from 0 degrees to 180 degrees
+  Serial.println("Turning stove sim");
+  for (; pos <= 180; pos += 1){ // goes from 0 degrees to 180 degrees
     // in steps of 1 degree
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
-    pos += 1;
   }
 }
 
 void turn_stove_off(){
-  Serial.println("Turning stove to sim");
-  while (pos >= 0) { // goes from 180 degrees to 0 degrees
+  Serial.println("Turning stove to off");
+   for (; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
     myservo.write(pos);              // tell servo to go to position in variable 'pos'
     delay(15);                       // waits 15ms for the servo to reach the position
-    pos -= 1;
   }
 }
 
@@ -272,6 +304,18 @@ void loop() {
     turn_fan_on();
   }
   else{
+    sendMsg(230);
+    turn_fan_off();
+  }
+  if(is_gas_leak()){
+    Serial.println("Leak detected");
+    sendMsg(220);
+    turn_buzzer_on();
+    turn_fan_on();
+  }
+  else{
+    sendMsg(240);
+    turn_buzzer_off();
     turn_fan_off();
   }
 }

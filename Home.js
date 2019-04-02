@@ -9,8 +9,8 @@ const dataArray = [
 
 ];
 
-const SendActions = ['whistleStart', 'whistleStop' ];
-const RecvActions = ['whistleInc', 'tempHigh', 'gasLeak'];
+const SendActions = ['whistleStart', 'whistleStop', 'stoveSim', 'stoveOff' ];
+const RecvActions = ['whistleInc', 'tempHigh', 'gasLeak', 'tempNormal', 'gasNormal'];
 
 var cooker = require('./assets/whistle4.png');
 
@@ -98,7 +98,12 @@ export default class Home extends React.Component {
           case 'gasLeak':
             this.setState({isGasLeak: true});
             break;
-  
+          case 'tempNormal':
+            this.setState({isTempHigh : false});
+            break;
+          case 'gasNormal':
+            this.setState({isGasLeak: false});
+            break;
         }
       }
       catch(e)
