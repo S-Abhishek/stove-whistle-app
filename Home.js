@@ -265,7 +265,7 @@ export default class Home extends React.Component {
 
           <Card transparent>
           <View style = {{flex:1, flexDirection: 'row'}}>
-              <Button style={{ backgroundColor: '#D4E157', paddingHorizontal : 10 }} rounded block onPress={() => {this.sendMessage('stoveSim',0)}}>
+              <Button style={{ backgroundColor: '#66BB6A', paddingHorizontal : 10 }} rounded block onPress={() => {this.sendMessage('stoveSim',0)}}>
                   <Text>Stove Sim</Text>
               </Button>
               <Right/>
