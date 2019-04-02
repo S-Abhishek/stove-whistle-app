@@ -47,10 +47,17 @@ void setup() {
 //  myservo.write(pos);  
   
   // Whistle mic
-  pinMode(A1,INPUT);
+  pinMode(A1, INPUT);
   
+  // LPG
+  pinMode(A0, INPUT);
+
+  // buzz
+  pinMode(buzz, OUTPUT);
+
   // Fan
-  pinMode(A0,OUTPUT);
+  pinMode(fan, OUTPUT);
+
   getIP();
 }
 
@@ -309,8 +316,8 @@ void loop() {
   }
   if(is_gas_leak()){
     Serial.println("Leak detected");
-    sendMsg(220);
     turn_buzzer_on();
+    sendMsg(220);
     turn_fan_on();
   }
   else{
