@@ -221,7 +221,7 @@ export default class Home extends React.Component {
           
           <Card style={styles.card}>
             <CardItem header>
-              <Text style={{ fontSize: 25 }}>Whistle 1</Text>
+              <Text style={{ fontSize: 25 }}>Whistle</Text>
             </CardItem>
             
             <CardItem>
@@ -262,6 +262,18 @@ export default class Home extends React.Component {
             </CardItem>
           </Card>
           </View>
+
+          <Card transparent>
+          <View style = {{flex:1, flexDirection: 'row'}}>
+              <Button style={{ backgroundColor: '#D4E157', paddingHorizontal : 10 }} rounded block onPress={() => {this.sendMessage('stoveSim',0)}}>
+                  <Text>Stove Sim</Text>
+              </Button>
+              <Right/>
+              <Button style={{ backgroundColor: '#EF5350', paddingHorizontal : 10 }} rounded block onPress={() => {this.sendMessage('stoveOff',0)}}>
+                  <Text>Stove Off</Text>
+              </Button>
+          </View>
+          </Card>
           <Dialog
           onDismiss={() => {this.setState({ DialogState: false });}}
           width={0.9}
